@@ -1,0 +1,94 @@
+<div class="promotion-list-container">
+  <!-- Header -->
+  <div class="page-header">
+    <h1 class="page-title">Danh sách khuyến mãi</h1>
+  </div>
+
+  <!-- Toolbar -->
+  <div class="toolbar">
+    <div class="search-container">
+      <input 
+        type="text" 
+        class="search-input" 
+        placeholder="Tìm khuyến mãi..."
+        [(ngModel)]="searchTerm"
+        (input)="onSearchChange()">
+    </div>
+    
+    <div class="filter-container">
+      <select 
+        class="status-filter" 
+        [(ngModel)]="statusFilter"
+        (change)="onStatusFilterChange()">
+        <option value="all">Tất cả</option>
+        <option value="active">Đang hoạt động</option>
+        <option value="expired">Hết hạn</option>
+      </select>
+    </div>
+    
+    <button class="btn-add-promotion" routerLink="/promotion-form">
+      + Thêm khuyến mãi
+    </button>
+  </div>
+
+  <!-- Table Container -->
+  <div class="table-container hover-card">
+    <table class="promotion-table">
+      <thead>
+        <tr>
+          <th>Tên khuyến mãi</th>
+          <th>Mã khuyến mãi</th>
+          <th>Phần trăm giảm</th>
+          <th>Ngày bắt đầu</th>
+          <th>Ngày kết thúc</th>
+          <th>Trạng thái</th>
+          <th>Hành động</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr 
+          *ngFor="let promotion of filteredPromotions" 
+          class="table-row hover-row">
+          <td class="promotion-name">
+            <div class="name">{{ promotion.promotion_name }}</div>
+            <div class="description">{{ promotion.description }}</div>
+          </td>
+          <td class="promotion-code">{{ promotion.promotion_id }}</td>
+          <td class="discount-value">
+            <span *ngIf="promotion.promotion_value > 0">{{ promotion.promotion_value }}%</span>
+            <span *ngIf="promotion.promotion_value === 0">Miễn phí</span>
+          </td>
+          <td class="start-date">{{ formatDate(promotion.start_date) }}</td>
+          <td class="end-date">{{ formatDate(promotion.end_date) }}</td>
+          <td class="status">
+            <span 
+              class="status-badge" 
+              [ngClass]="getStatusBadgeClass(promotion)">
+              {{ getStatusText(promotion) }}
+            </span>
+          </td>
+          <td class="actions">
+            <button 
+              class="action-btn edit-btn hover-rotate" 
+              (click)="onEdit(promotion)"
+              title="Sửa">
+              ✏️
+            </button>
+            <button 
+              class="action-btn delete-btn hover-rotate" 
+              (click)="onDelete(promotion)"
+              title="Xóa">
+              🗑️
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    
+    <!-- Empty State -->
+    <div *ngIf="filteredPromotions.length === 0" class="empty-state">
+      <p>Không tìm thấy khuyến mãi nào</p>
+    </div>
+  </div>
+</div>
+
