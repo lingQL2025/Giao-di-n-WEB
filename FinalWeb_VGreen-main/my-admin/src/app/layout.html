@@ -1,0 +1,119 @@
+<!-- Admin Layout - VGreen -->
+<div class="admin-layout">
+  <!-- Sidebar Left -->
+  <aside class="sidebar" [class.collapsed]="isSidebarCollapsed">
+    <!-- Logo Section -->
+    <div class="sidebar-logo">
+      <img src="asset/favicon/logo_title_w.png" alt="VGreen Admin" class="logo-image logo-full">
+      <img src="asset/favicon/logo_w.png" alt="VGreen" class="logo-image logo-mini">
+    </div>
+
+    <!-- Navigation Menu -->
+    <nav class="sidebar-menu">
+      <ul class="menu-list">
+        <li class="menu-item">
+          <a href="#" class="menu-link active" (click)="navigateTo('dashboard', $event)">
+            <img src="asset/icons/home.png" alt="Dashboard" class="menu-icon">
+            <span class="menu-text">Tổng quan</span>
+          </a>
+        </li>
+        
+        <li class="menu-item">
+          <a href="#" class="menu-link" (click)="navigateTo('products', $event)">
+            <img src="asset/icons/shop.png" alt="Products" class="menu-icon">
+            <span class="menu-text">Sản phẩm</span>
+          </a>
+        </li>
+
+        <li class="menu-item">
+          <a href="#" class="menu-link" (click)="navigateTo('orders', $event)">
+            <img src="asset/icons/order.png" alt="Orders" class="menu-icon">
+            <span class="menu-text">Đơn hàng</span>
+          </a>
+        </li>
+
+        <li class="menu-item">
+          <a href="#" class="menu-link" (click)="navigateTo('customers', $event)">
+            <img src="asset/icons/customer.png" alt="Customers" class="menu-icon">
+            <span class="menu-text">Khách hàng</span>
+          </a>
+        </li>
+
+        <li class="menu-item">
+          <a href="#" class="menu-link" (click)="navigateTo('promotions', $event)">
+            <img src="asset/icons/promotion.png" alt="Promotions" class="menu-icon">
+            <span class="menu-text">Khuyến mãi</span>
+          </a>
+        </li>
+
+        <li class="menu-item">
+          <a href="#" class="menu-link" (click)="navigateTo('posts', $event)">
+            <img src="asset/icons/edit.png" alt="Posts" class="menu-icon">
+            <span class="menu-text">Bài đăng</span>
+          </a>
+        </li>
+
+        <li class="menu-item">
+          <a href="#" class="menu-link" (click)="navigateTo('consulting', $event)">
+            <img src="asset/icons/support.png" alt="Consulting" class="menu-icon">
+            <span class="menu-text">Tư vấn</span>
+          </a>
+        </li>
+      </ul>
+    </nav>
+
+    <!-- Settings Section -->
+    <div class="sidebar-settings">
+      <a href="#" class="menu-link" (click)="navigateTo('settings', $event)">
+        <img src="asset/icons/setting.png" alt="Settings" class="menu-icon">
+        <span class="menu-text">Cài đặt</span>
+      </a>
+    </div>
+
+    <!-- Sidebar Footer -->
+    <div class="sidebar-footer">
+      <button class="logout-button" (click)="logout()">
+        <img src="asset/icons/logout.png" alt="Logout">
+        <span>Đăng xuất</span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- Main Content Right -->
+  <main class="main-area">
+    <!-- Top Bar -->
+    <header class="top-bar">
+      <div class="top-bar-left">
+        <button class="menu-toggle-btn" (click)="toggleSidebarCollapse()">
+          <img src="asset/icons/list.png" alt="Menu">
+        </button>
+        <div class="search-box">
+          <img src="asset/icons/search.png" alt="Search" class="search-icon">
+          <input type="text" placeholder="Tìm kiếm" class="search-input">
+        </div>
+      </div>
+      
+      <div class="top-bar-right">
+        <button class="top-icon-btn notification-btn">
+          <img src="asset/icons/notice.png" alt="Notifications">
+          <span class="notification-badge">9</span>
+        </button>
+        
+        <button class="top-icon-btn mail-btn">
+          <img src="asset/icons/mail.png" alt="Mail">
+          <span class="notification-badge">3</span>
+        </button>
+        
+        <div class="top-user-info">
+          <img src="asset/icons/avatar.png" alt="Admin" class="top-avatar">
+          <span class="user-name">Quản trị viên</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Content Area with Router Outlet -->
+    <div class="content-area">
+      <router-outlet></router-outlet>
+    </div>
+  </main>
+</div>
