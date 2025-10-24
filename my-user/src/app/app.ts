@@ -1,14 +1,24 @@
-import { Component, signal } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
-import { Promotion } from './promotion/promotion';  
-import { Chat } from './chat/chat';
+import { Component } from '@angular/core';
+import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
+import { CommonModule } from '@angular/common';
+
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, Promotion,Chat],
+  imports: [RouterOutlet, RouterLink, RouterLinkActive, CommonModule],
   templateUrl: './app.html',
-  styleUrl: './app.css',
+  styleUrls: ['./app.css']
 })
 export class App {
-  protected readonly title = signal('my-user');
+  title = 'ShopApp';
+  isSidebarOpen = false;
+  isSidebarExpanded = false;
+
+  toggleSidebar() {
+    this.isSidebarOpen = !this.isSidebarOpen;
+  }
+
+  toggleSidebarExpanded() {
+    this.isSidebarExpanded = !this.isSidebarExpanded;
+  }
 }

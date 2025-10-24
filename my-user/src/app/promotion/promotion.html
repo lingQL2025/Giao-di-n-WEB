@@ -1,1 +1,264 @@
-<p>promotion works!</p>
+<div class="promotion-page">
+  <div class="breadcrumb">
+    <span>Quản trị viên</span>
+    <span class="separator">/</span>
+    <span>Quản lý khuyến mãi</span>
+    <span class="separator">/</span>
+    <span class="current">Danh sách khuyến mãi</span>
+  </div>
+
+  <div class="page-header">
+    <h1>DANH SÁCH KHUYẾN MÃI</h1>
+    <button class="btn-add" (click)="openNewPromotionModal()">
+      <span class="material-icons">add_circle</span>
+      Thêm khuyến mãi
+    </button>
+  </div>
+
+  <div class="status-cards">
+    <div class="status-card">
+      <h3>ĐÃ KẾT THÚC</h3>
+      <div class="card-content">
+        <p class="count">{{ getPromotionsByStatus('ended').length }}</p>
+      </div>
+    </div>
+    <div class="status-card">
+      <h3>ĐANG DIỄN RA</h3>
+      <div class="card-content">
+        <p class="count">{{ getPromotionsByStatus('active').length }}</p>
+      </div>
+    </div>
+    <div class="status-card">
+      <h3>SẮP DIỄN RA</h3>
+      <div class="card-content">
+        <p class="count">{{ getPromotionsByStatus('upcoming').length }}</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="table-controls">
+    <div class="search-input">
+      <input 
+        type="text" 
+        placeholder="Tìm kiếm"
+        [(ngModel)]="searchQuery"
+        (input)="filterPromotions()">
+      <button class="search-btn">
+        <span class="material-icons">search</span>
+      </button>
+    </div>
+
+    <div class="action-buttons">
+      <span class="selection-count">xxx đã chọn</span>
+      <button class="action-btn group-btn">
+        <span class="material-icons">group_work</span>
+        Nhóm
+      </button>
+      <button class="action-btn edit-btn">
+        <span class="material-icons">edit</span>
+        Chỉnh
+      </button>
+      <button class="action-btn delete-btn">
+        <span class="material-icons">delete</span>
+        Xoá
+      </button>
+      <button class="action-btn filter-btn">
+        <span class="material-icons">filter_list</span>
+        Lọc
+      </button>
+    </div>
+  </div>
+
+  <div class="data-table">
+    <table>
+      <thead>
+        <tr>
+          <th class="checkbox-col">
+            <input type="checkbox" (change)="toggleSelectAll($event)">
+          </th>
+          <th>Mã khuyến mãi</th>
+          <th>Tên</th>
+          <th>Lượt sử dụng</th>
+          <th>Trạng thái</th>
+          <th>Bắt đầu</th>
+          <th>Kết thúc</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let promo of filteredPromotions" [class.selected]="promo.selected">
+          <td class="checkbox-col">
+            <input type="checkbox" [(ngModel)]="promo.selected">
+          </td>
+          <td class="promo-code">{{ promo.code }}</td>
+          <td>{{ promo.name }}</td>
+          <td>{{ promo.usedCount }}/{{ promo.maxUsage }}</td>
+          <td>
+            <span class="status-badge" [class]="promo.statusClass">
+              <span class="status-dot"></span>
+              {{ promo.statusText }}
+            </span>
+          </td>
+          <td>{{ promo.startDate }}</td>
+          <td>{{ promo.endDate }}</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="no-data" *ngIf="filteredPromotions.length === 0">
+      <span class="material-icons">inbox</span>
+      <p>Không có dữ liệu</p>
+    </div>
+  </div>
+
+  <div class="pagination" *ngIf="filteredPromotions.length > 0">
+    <button class="page-btn" [disabled]="currentPage === 1" (click)="previousPage()">
+      <span class="material-icons">chevron_left</span>
+    </button>
+    <span class="page-info">Trang {{ currentPage }} / {{ totalPages }}</span>
+    <button class="page-btn" [disabled]="currentPage === totalPages" (click)="nextPage()">
+      <span class="material-icons">chevron_right</span>
+    </button>
+  </div>
+
+  <!-- Add/Edit Promotion Modal -->
+  <div class="modal-overlay" *ngIf="showNewPromotionModal" (click)="closeNewPromotionModal()">
+    <div class="modal" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3>
+          <span class="material-icons">replay</span>
+          Quay lại trang khuyến mãi
+        </h3>
+        <button class="modal-close" (click)="closeNewPromotionModal()">
+          <span class="material-icons">close</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Tên khuyến mãi:</label>
+          <input type="text" [(ngModel)]="newPromotion.name" placeholder="Tên khuyến mãi">
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Mã khuyến mãi:</label>
+            <input type="text" [(ngModel)]="newPromotion.code" placeholder="Mã khuyến mãi">
+          </div>
+          <div class="form-group">
+            <label>Thời gian diễn ra:</label>
+            <div class="date-input-group">
+              <div class="date-input-wrapper">
+                <input type="date" [(ngModel)]="newPromotion.startDate" placeholder="dd/mm/yy">
+              </div>
+              <span class="date-separator">đến</span>
+              <div class="date-input-wrapper">
+                <input type="date" [(ngModel)]="newPromotion.endDate" placeholder="dd/mm/yy">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Loại khuyến mãi:</label>
+            <div class="radio-group">
+              <div class="radio-option">
+                <input type="radio" id="percentage" name="promoType" [(ngModel)]="newPromotion.type" value="percentage">
+                <label for="percentage">Theo phần trăm</label>
+              </div>
+              <div class="radio-option">
+                <input type="radio" id="fixed" name="promoType" [(ngModel)]="newPromotion.type" value="fixed">
+                <label for="fixed">Theo giá</label>
+              </div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Nhóm khuyến mãi:</label>
+            <input type="text" [(ngModel)]="newPromotion.group" placeholder="Nhóm khuyến mãi">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Mô tả:</label>
+          <textarea [(ngModel)]="newPromotion.description" placeholder="Mô tả"></textarea>
+        </div>
+
+        <div class="form-group">
+          <label>Sản phẩm áp dụng:</label>
+          <div class="radio-group">
+            <div class="radio-option">
+              <input type="radio" id="allProducts" name="productScope" [(ngModel)]="newPromotion.productScope" value="all">
+              <label for="allProducts">Danh mục sản phẩm</label>
+            </div>
+            <div class="radio-option">
+              <input type="radio" id="specificProducts" name="productScope" [(ngModel)]="newPromotion.productScope" value="specific">
+              <label for="specificProducts">Nhóm sản phẩm</label>
+            </div>
+            <div class="radio-option">
+              <input type="radio" id="singleProduct" name="productScope" [(ngModel)]="newPromotion.productScope" value="single">
+              <label for="singleProduct">Sản phẩm</label>
+            </div>
+          </div>
+          <input type="text" [(ngModel)]="newPromotion.products" placeholder="Sản phẩm áp dụng" style="margin-top: 0.5rem;">
+        </div>
+
+        <div class="form-group">
+          <label>Điều kiện áp dụng:</label>
+          <div class="radio-group">
+            <div class="radio-option">
+              <input type="radio" id="minPrice" name="condition" [(ngModel)]="newPromotion.condition" value="minPrice">
+              <label for="minPrice">Giá trị tối thiểu</label>
+            </div>
+            <div class="radio-option">
+              <input type="radio" id="minQuantity" name="condition" [(ngModel)]="newPromotion.condition" value="minQuantity">
+              <label for="minQuantity">Nhóm khách hàng</label>
+            </div>
+            <div class="radio-option">
+              <input type="radio" id="noCondition" name="condition" [(ngModel)]="newPromotion.condition" value="none">
+              <label for="noCondition">Không yêu cầu</label>
+            </div>
+          </div>
+          <input type="text" [(ngModel)]="newPromotion.conditionValue" placeholder="Điều kiện áp dụng" style="margin-top: 0.5rem;">
+        </div>
+
+        <div class="form-group">
+          <label>Giới hạn sử dụng:</label>
+          <div class="usage-limit-group">
+            <div class="radio-option">
+              <input type="radio" id="limited" name="usageLimit" [(ngModel)]="newPromotion.usageLimitType" value="limited">
+              <label for="limited">Có</label>
+            </div>
+            <div class="usage-limit-input" *ngIf="newPromotion.usageLimitType === 'limited'">
+              <input type="number" [(ngModel)]="newPromotion.maxUsage" placeholder="xxx">
+            </div>
+            <div class="radio-option">
+              <input type="radio" id="unlimited" name="usageLimit" [(ngModel)]="newPromotion.usageLimitType" value="unlimited">
+              <label for="unlimited">Không</label>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Hình ảnh:</label>
+          <div class="image-upload-grid">
+            <div class="image-upload-box">
+              <span class="material-icons">add_photo_alternate</span>
+            </div>
+            <div class="image-upload-box">
+              <span class="material-icons">add_photo_alternate</span>
+            </div>
+            <div class="image-upload-box">
+              <span class="material-icons">add_photo_alternate</span>
+            </div>
+            <div class="image-upload-box">
+              <span class="material-icons">add_photo_alternate</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" (click)="closeNewPromotionModal()">Hủy</button>
+        <button class="btn-primary" (click)="createNewPromotion()">Lưu</button>
+      </div>
+    </div>
+  </div>
+</div>

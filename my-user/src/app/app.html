@@ -1,15 +1,82 @@
-
-
-<main class="main">
-  <div class="content">
-    <app-promotion></app-promotion>
-    <span class="divider"></span>
-  </div>
-  <div class="content">
-    <app-chat></app-chat>
-    <span class="divider"></span>
+<div class="app-container">
+  <aside class="sidebar" [class.open]="isSidebarOpen" [class.expanded]="isSidebarExpanded">
+    <div class="sidebar-header">
+      <div class="sidebar-logo">
+        <img src="assets/favicon/logo_w.png" alt="Logo" class="logo-img">
+      </div>
+      <button class="menu-btn" (click)="toggleSidebarExpanded()">
+        <span class="material-icons">menu</span>
+      </button>
+    </div>
     
+    <nav class="sidebar-nav">
+      <a href="#" class="nav-item">
+        <img src="assets/icons/home.png" alt="Home" class="nav-icon">
+        <span class="nav-text">Trang chủ</span>
+      </a>
+      <a href="#" class="nav-item">
+        <img src="assets/icons/order.png" alt="Order" class="nav-icon">
+        <span class="nav-text">Đơn hàng</span>
+      </a>
+      <a href="#" class="nav-item">
+        <img src="assets/icons/vegetable.png" alt="vegetable" class="nav-icon">
+        <span class="nav-text">Công thức</span>
+      </a>
+      <a href="#" class="nav-item">
+        <img src="assets/icons/person.png" alt="Person" class="nav-icon">
+        <span class="nav-text">Nhân viên</span>
+      </a>
+      <a href="#" class="nav-item">
+        <img src="assets/icons/blog.png" alt="Blog" class="nav-icon">
+        <span class="nav-text">Blog</span>
+      </a>
+      <a routerLink="/promotions" routerLinkActive="active" class="nav-item">
+        <img src="assets/icons/promotion.png" alt="Promotion" class="nav-icon">
+        <span class="nav-text">Khuyến mãi</span>
+      </a>
+      <a routerLink="/chat" routerLinkActive="active" class="nav-item">
+        <img src="assets/icons/support.png" alt="Support" class="nav-icon">
+        <span class="nav-text">Hỗ trợ</span>
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <a href="#" class="footer-item">
+        <img src="assets/icons/setting.png" alt="Setting" class="nav-icon">
+        <span class="nav-text">Cài đặt</span>
+      </a>
+    </div>
+  </aside>
+
+  <div class="main-wrapper">
+    <header class="top-header">
+      <div class="header-left">
+        <button class="mobile-menu-toggle" (click)="toggleSidebar()">
+         <img src="assets/icons/list.png" alt="List" class="nav-icon">
+        </button>
+        <div class="search-box">
+          <img src="assets/icons/search.png" alt="Search" class="nav-icon">
+          <input type="text" placeholder="Tìm kiếm...">
+        </div>
+      </div>
+      
+      <div class="header-right">
+        <button class="header-icon-btn">
+          <img src="assets/icons/notice.png" alt="Notice" class="nav-icon">
+          <span class="badge">3</span>
+        </button>
+        <button class="header-icon-btn">
+          <img src="assets/icons/mail.png" alt="Mail" class="nav-icon">
+          <span class="badge">5</span>
+        </button>
+        <button class="header-icon-btn">
+          <img src="assets/icons/avatar.png" alt="Avatar" class="nav-icon">
+        </button>
+      </div>
+    </header>
+
+    <main class="page-content">
+      <router-outlet></router-outlet>
+    </main>
   </div>
-</main>
-
-
+</div>
