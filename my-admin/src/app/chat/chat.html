@@ -1,0 +1,144 @@
+<div class="chat-page">
+  <div class="breadcrumb">
+    <span>Quản trị viên</span>
+    <span class="separator">/</span>
+    <span>Tin nhắn</span>
+    <span class="separator">/</span>
+    <span class="current">Tin nhắn</span>
+  </div>
+
+  <div class="page-header">
+    <h1>TIN NHẮN</h1>
+  </div>
+
+  <div class="chat-container">
+    <div class="conversations-panel">
+      <div class="search-box">
+        <input 
+          type="text" 
+          placeholder="Tìm kiếm"
+          [(ngModel)]="searchQuery"
+          (input)="filterConversations()">
+        <button class="search-btn">
+          <span class="material-icons">search</span>
+        </button>
+      </div>
+
+      <div class="filter-tabs">
+        <button 
+          class="filter-tab"
+          [class.active]="filterStatus === 'unread'"
+          (click)="filterStatus = 'unread'; filterConversations()">
+          Chưa đọc
+        </button>
+        <button 
+          class="filter-tab"
+          [class.active]="filterStatus === 'read'"
+          (click)="filterStatus = 'read'; filterConversations()">
+          Đã sao
+        </button>
+        <button 
+          class="filter-tab"
+          [class.active]="filterStatus === 'all'"
+          (click)="filterStatus = 'all'; filterConversations()">
+          Tất cả
+        </button>
+      </div>
+
+      <div class="conversation-list">
+        <div 
+          *ngFor="let conv of filteredConversations"
+          class="conversation-item"
+          [class.active]="currentConversation?.id === conv.id"
+          (click)="selectConversation(conv)">
+          <button 
+            class="star-btn"
+            [class.starred]="conv.starred"
+            (click)="toggleStar(conv, $event)">
+            <span class="material-icons">{{ conv.starred ? 'star' : 'star_border' }}</span>
+          </button>
+          <div class="conversation-avatar">
+            <div class="avatar-circle">{{ conv.initials }}</div>
+          </div>
+          <div class="conversation-info">
+            <div class="conversation-header">
+              <span class="conversation-name">{{ conv.name }}</span>
+              <span class="conversation-time">{{ formatTime(conv.lastMessageTime) }}</span>
+            </div>
+            <div class="conversation-preview">{{ conv.lastMessage }}</div>
+          </div>
+        </div>
+
+        <div class="no-conversations" *ngIf="filteredConversations.length === 0">
+          <span class="material-icons">inbox</span>
+          <p>Không có tin nhắn</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Chat Panel -->
+    <div class="chat-panel">
+      <div class="chat-content" *ngIf="currentConversation; else noChat">
+        <div class="chat-header">
+          <div class="user-info">
+            <div class="conversation-avatar">
+              <div class="avatar-circle large">{{ currentConversation.initials }}</div>
+            </div>
+            <div class="user-details">
+              <h3>{{ currentConversation.name }}</h3>
+              <p>{{ currentConversation.status }}</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="messages-area" #messagesContainer>
+          <div class="message-date">
+            <span>T3 3 tháng 1, 2025</span>
+          </div>
+
+          <div class="message-group">
+            <div 
+              *ngFor="let message of currentConversation.messages"
+              class="message"
+              [class.user]="message.sender === 'user'"
+              [class.agent]="message.sender === 'agent'">
+              <div class="message-content">
+                <div class="message-bubble">
+                  <p>{{ message.text }}</p>
+                </div>
+                <span class="message-time">{{ formatMessageTime(message.timestamp) }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="message-input-area">
+          <button class="attach-btn" title="Đính kèm file">
+            <span class="material-icons">attach_file</span>
+          </button>
+          <textarea 
+            class="message-input"
+            placeholder="Nhập tin nhắn..."
+            [(ngModel)]="messageText"
+            (keydown.enter)="handleEnter($any($event))"
+            rows="1"></textarea>
+          <button 
+            class="send-btn"
+            [disabled]="!messageText.trim()"
+            (click)="sendMessage()"
+            title="Gửi tin nhắn">
+            <span class="material-icons">send</span>
+          </button>
+        </div>
+      </div>
+
+      <ng-template #noChat>
+        <div class="no-chat-selected">
+          <span class="material-icons">chat_bubble_outline</span>
+          <h3>Chọn một cuộc trò chuyện</h3>
+          <p>Chọn một tin nhắn từ danh sách bên trái để bắt đầu</p>
+        </div>
+      </ng-template>
+    </div>
+  </div>
+</div>

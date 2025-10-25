@@ -1,0 +1,226 @@
+<div class="blog-page" *ngIf="!showDetailView">
+  <div class="breadcrumb">
+    <span>Quản trị viên</span>
+    <span class="separator">/</span>
+    <span>Quản lý Blogs</span>
+    <span class="separator">/</span>
+    <span class="current">Danh sách bài viết</span>
+  </div>
+
+  <div class="page-header">
+    <h1>DANH SÁCH BÀI VIẾT</h1>
+    <button class="btn-add" (click)="openNewBlogModal()">
+      <span class="material-icons">add_circle</span>
+      Thêm bài viết
+    </button>
+  </div>
+
+  <div class="table-controls">
+    <div class="search-input">
+      <input 
+        type="text" 
+        placeholder="Tìm kiếm"
+        [(ngModel)]="searchQuery"
+        (input)="filterBlogs()">
+      <button class="search-btn">
+        <span class="material-icons">search</span>
+      </button>
+    </div>
+
+    <div class="action-buttons">
+      <span class="selection-count">{{ getSelectedCount() }} đã chọn</span>
+      <button class="action-btn edit-btn" (click)="openEditModal()" [disabled]="getSelectedCount() !== 1">
+        <span class="material-icons">edit</span>
+        Chỉnh
+      </button>
+      <button class="action-btn delete-btn" (click)="deleteSelectedBlogs()">
+        <span class="material-icons">delete</span>
+        Xoá
+      </button>
+      <button class="action-btn filter-btn">
+        <span class="material-icons">filter_list</span>
+        Lọc
+      </button>
+    </div>
+  </div>
+
+  <div class="data-table">
+    <table>
+      <thead>
+        <tr>
+          <th class="checkbox-col">
+            <input type="checkbox" (change)="toggleSelectAll($event)">
+          </th>
+          <th>Mã bài viết</th>
+          <th>Bài viết</th>
+          <th>Thời gian đăng lên</th>
+          <th>Người viết</th>
+          <th>Category</th>
+          <th>Lượt xem</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let blog of filteredBlogs" [class.selected]="blog.selected" (click)="viewBlogDetail(blog)" style="cursor: pointer;">
+          <td class="checkbox-col" (click)="$event.stopPropagation()">
+            <input type="checkbox" [(ngModel)]="blog.selected">
+          </td>
+          <td class="blog-id">{{ blog.id }}</td>
+          <td class="blog-title">{{ blog.title }}</td>
+          <td>{{ blog.date }}</td>
+          <td>{{ blog.author }}</td>
+          <td>{{ blog.category }}</td>
+          <td>{{ blog.views }}</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="no-data" *ngIf="filteredBlogs.length === 0">
+      <span class="material-icons">inbox</span>
+      <p>Không có dữ liệu</p>
+    </div>
+  </div>
+
+  <div class="pagination" *ngIf="filteredBlogs.length > 0">
+    <button class="page-btn" [disabled]="currentPage === 1" (click)="previousPage()">
+      <span class="material-icons">chevron_left</span>
+    </button>
+    <span class="page-info">Trang {{ currentPage }} / {{ totalPages }}</span>
+    <button class="page-btn" [disabled]="currentPage === totalPages" (click)="nextPage()">
+      <span class="material-icons">chevron_right</span>
+    </button>
+  </div>
+</div>
+
+
+<div class="detail-view" *ngIf="showDetailView && selectedBlog">
+  <div class="breadcrumb">
+    <span>Quản trị viên</span>
+    <span class="separator">/</span>
+    <span>Quản lý Blogs</span>
+    <span class="separator">/</span>
+    <span class="breadcrumb-link" (click)="closeDetailView()">Danh sách bài viết</span>
+    <span class="separator">/</span>
+    <span class="current">Chi tiết bài viết</span>
+  </div>
+
+  <div class="detail-header">
+    <h1>Chi tiết bài viết</h1>
+  </div>
+
+  <div class="detail-layout-vertical">
+    <div class="top-section">
+      <div class="detail-card-inline">
+        <div class="avatar-circle">
+          <span class="material-icons">person</span>
+        </div>
+        <div class="card-info-inline">
+          <div class="title-row">
+            <h2>TITLE</h2>
+            <button class="edit-icon-btn" (click)="openEditModal()">
+              <span class="material-icons">edit</span>
+            </button>
+          </div>
+          <div class="info-grid">
+            <div class="info-item-inline">
+              <span class="info-label">Tác giả:</span>
+              <span class="info-value">{{ selectedBlog.author }}</span>
+            </div>
+            <div class="info-item-inline">
+              <span class="info-label">Email:</span>
+              <span class="info-value">{{ selectedBlog.email }}</span>
+            </div>
+            <div class="info-item-inline">
+              <span class="info-label">Ngày tạo:</span>
+              <span class="info-value">{{ selectedBlog.date }}</span>
+            </div>
+            <div class="info-item-inline">
+              <span class="info-label">Category:</span>
+              <span class="info-value">{{ selectedBlog.category }}</span>
+            </div>
+            <div class="info-item-inline hashtag-row">
+              <span class="info-label">Hastag:</span>
+              <div class="hashtag-badges-inline">
+                <span class="hashtag-badge" *ngFor="let tag of selectedBlog.hashtags">{{ tag }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="action-buttons-side">
+        <button class="btn-delete-detail" (click)="deleteBlog(selectedBlog)">
+          Xóa bài viết
+        </button>
+        <button class="btn-save-detail">
+          Lưu bài viết
+        </button>
+      </div>
+    </div>
+
+    <div class="detail-content-section">
+      <h3 class="content-heading">Heading</h3>
+      <div class="content-text">
+        <p>{{ selectedBlog.content }}</p>
+      </div>
+      <div class="content-image-placeholder" *ngIf="!selectedBlog.imageUrl">
+        <div class="image-icon-circle">
+          <span class="material-icons">image</span>
+        </div>
+        <div class="mountain-icon">
+          <svg width="80" height="60" viewBox="0 0 80 60" fill="none">
+            <path d="M0 60L30 20L50 40L80 0V60H0Z" fill="#999"/>
+          </svg>
+        </div>
+      </div>
+      <img *ngIf="selectedBlog.imageUrl" [src]="selectedBlog.imageUrl" alt="{{ selectedBlog.title }}" class="content-image">
+    </div>
+  </div>
+</div>
+
+
+<div class="modal-overlay" *ngIf="showEditModal" (click)="closeEditModal()">
+  <div class="modal-edit" (click)="$event.stopPropagation()">
+    <div class="modal-edit-header">
+      <h3>TITLE</h3>
+      <button class="modal-close" (click)="closeEditModal()">
+        <span class="material-icons">close</span>
+      </button>
+    </div>
+    <div class="modal-edit-body">
+      <div class="edit-form-group">
+        <label>Tác giả:</label>
+        <div class="edit-input-box">{{ newBlog.author || 'Nguyễn Thị A' }}</div>
+      </div>
+
+      <div class="edit-form-group">
+        <label>Email:</label>
+        <div class="edit-input-box">{{ newBlog.email || 'abc@gmail.com' }}</div>
+      </div>
+
+      <div class="edit-form-group">
+        <label>Ngày tạo:</label>
+        <div class="edit-input-box date-box">
+          {{ newBlog.date || '01/10/2025' }}
+          <span class="material-icons">calendar_today</span>
+        </div>
+      </div>
+
+      <div class="edit-form-group">
+        <label>Category:</label>
+        <div class="edit-select-box">
+          {{ newBlog.category || 'Công thức nấu ăn' }}
+          <span class="material-icons">arrow_drop_down</span>
+        </div>
+      </div>
+
+      <div class="edit-form-group">
+        <label>Hastag</label>
+        <div class="edit-hashtag-display">
+          <span class="edit-hashtag-item" *ngFor="let tag of newBlog.hashtags">{{ tag }}</span>
+          <span class="edit-hashtag-item" *ngIf="newBlog.hashtags.length === 0">Khoai tây</span>
+          <span class="material-icons dropdown-icon">arrow_drop_down</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
