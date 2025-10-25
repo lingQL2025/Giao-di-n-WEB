@@ -5,7 +5,7 @@ How to run:
 npm install (optional)
 ```
 ```
-cd my-user
+cd my-admin
 ```
 ```
 ng serve
